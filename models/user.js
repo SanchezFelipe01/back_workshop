@@ -1,15 +1,17 @@
+const { number, boolean } = require('joi')
 const mongoose = require('mongoose')
 
 const Schema = mongoose.Schema
 
 let UserSchema = Schema({
-    name: {type: String, require: true, max:100},
-    username: {type: String, require:true},
+    firstname: {type: String, require: true, max:30},
+    lastname: {type: String, require: true, max: 30},
+    username: {type: String, require:true, min: 6},
     password: {type: String, require: true},
-    email: {type: String, require:true},
-    createdAt: {type: Date, require:true},
-    token: {type: String},
-    options: {type: String, require: false}
+    identification: {type: Number, require: true},
+    photo: {type: String, require: true},
+    active: {type: Boolean, require:true},
+    token: {type: String}
 })
 
 module.exports = mongoose.model('User', UserSchema)
