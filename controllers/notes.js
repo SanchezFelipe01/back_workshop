@@ -46,18 +46,37 @@ exports.show = (req, res , next) => {
 }
 
 exports.update = (req, res , next) => {
-    Note.findByIdAndUpdate(req.params.id, {$set: req.body}, (err, note) => {
+    
+    Note.findById(req.params.id, (err, note) => {
         if (err)
             return next(err)
-        res.send('Note updated successfully')
+        if(req.user.username == note.username){
+            Note.findByIdAndUpdate(req.params.id, {$set: req.body}, (err, note) => {
+                if (err)
+                    return next(err)
+                res.send('User updated successfully')
+            })
+        }else{
+            return res.status(401).send("you can't update other users notes")
+        }
     })
+    
 }
 
 exports.delete = (req, res , next) => {
-    Note.findByIdAndRemove(req.params.id, (err, note) => {
+    Note.findById(req.params.id, (err, note) => {
         if (err)
             return next(err)
-        res.send('Note deleted successfully')
+        if(req.user.username == note.username){
+            Note.findByIdAndRemove(req.params.id, (err, note) => {
+                if (err)
+                    return next(err)
+                res.send('Note deleted successfully')
+            })
+        }else{
+            return res.status(401).send("you can't delete other users notes")
+        }
     })
+    
 }
 
