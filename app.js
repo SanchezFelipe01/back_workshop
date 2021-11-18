@@ -39,7 +39,8 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  //res.render('error');
+  res.send({status:"error", message:err.message, error:error})
 });
 
 module.exports = app;

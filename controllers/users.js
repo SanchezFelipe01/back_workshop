@@ -47,19 +47,29 @@ exports.show = (req, res , next) => {
 }
 
 exports.update = (req, res , next) => {
-    User.findByIdAndUpdate(req.params.id, {$set: req.body}, (err, user) => {
-        if (err)
-            return next(err)
-        res.send('User updated successfully')
-    })
+    if(req.user.user_id == req.params.id){
+        User.findByIdAndUpdate(req.params.id, {$set: req.body}, (err, user) => {
+            if (err)
+                return next(err)
+            res.send('User updated successfully')
+        })
+    }else{
+        res.status(401).send('You cannot update other users, only yourself')
+    }
 }
 
 exports.delete = (req, res , next) => {
-    User.findByIdAndRemove(req.params.id, (err, user) => {
-        if (err)
-            return next(err)
-        res.send('User deleted successfully')
-    })
+    if(req.user.user_id == req.params.id){
+        User.findByIdAndRemove(req.params.id, (err, user) => {
+            if (err)
+                return next(err)
+            res.send('User deleted successfully')
+        })
+    }
+    else{
+        res.status(401).send('You cannot delete other users, only yourself')
+    }
+    
 }
 
 exports.login = async (req, res, next) => {
@@ -74,7 +84,7 @@ exports.login = async (req, res, next) => {
 
     
     if(user && await bcrypt.compare(password, user.password)){
-        const token = jwt.sign( {user_id: user._id, username}, "secret", {expiresIn: "30D"} );
+        const token = jwt.sign( {user_id: user._id, username}, "secret", {expiresIn: "2h"} );
             
         user.token = token;
 
