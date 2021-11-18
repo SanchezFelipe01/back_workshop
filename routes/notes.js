@@ -9,7 +9,7 @@ router.get('/:id', auth, note_controller.show)
 
 router.get('/', auth, note_controller.index)
 
-router.post('/add', note_controller.create)
+router.post('/add',auth, note_controller.create)
 
 router.put('/:id', auth, note_controller.update)
 

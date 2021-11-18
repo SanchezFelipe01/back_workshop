@@ -1,6 +1,7 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const user = require('../models/user');
 
 exports.create = async (req, res, next) => {
    
@@ -46,16 +47,25 @@ exports.show = (req, res , next) => {
     })
 }
 
-exports.update = (req, res , next) => {
-    if(req.user.user_id == req.params.id){
-        User.findByIdAndUpdate(req.params.id, {$set: req.body}, (err, user) => {
-            if (err)
-                return next(err)
-            res.send('User updated successfully')
-        })
-    }else{
-        res.status(401).send('You cannot update other users, only yourself')
+exports.update = async (req, res , next) => {
+    if(req.user.user_id != req.params.id){
+        return res.status(401).send('You cannot update other users, only yourself')
     }
+    let encryptedPassword = await bcrypt.hash(req.body.password, 10);
+    let userToEdit = {
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        username: req.body.username,
+        password: encryptedPassword,
+        identification: req.body.identification,
+        photo: req.body.photo,
+        active: req.body.active
+    }
+    User.findByIdAndUpdate(req.params.id, {$set: userToEdit}, (err, user) => {
+        if (err)
+            return next(err)
+        res.send('User updated successfully')
+    })
 }
 
 exports.delete = (req, res , next) => {
