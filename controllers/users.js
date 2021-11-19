@@ -69,16 +69,15 @@ exports.update = async (req, res , next) => {
 }
 
 exports.delete = (req, res , next) => {
-    if(req.user.user_id == req.params.id){
+    if(req.user.user_id != req.params.id){
+        return res.status(401).send('You cannot delete other users, only yourself')
+    }
         User.findByIdAndRemove(req.params.id, (err, user) => {
             if (err)
                 return next(err)
             res.send('User deleted successfully')
         })
-    }
-    else{
-        res.status(401).send('You cannot delete other users, only yourself')
-    }
+    
     
 }
 
