@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-let url = "mongodb://localhost:27017/test";
+let url = process.env.MONGO_URI;
 
 mongoose.connect(url);
 
